@@ -1,0 +1,56 @@
+# OCR Arena (space/): a static Hugging Face Space whose OCR engines run in the browser.
+# test: serves the folder and reads every example page with PaddleOCR, EasyOCR and Tesseract in Chrome, and one page each
+# with GLM-OCR and LightOnOCR on the CPU (tests/arena_browser.mjs).
+# publish: uploads the folder to huggingface.co/spaces/runemic-ai/ocr-arena with the HF_TOKEN secret (a write token for
+# runemic-ai; static Spaces are free). Without the secret the test still runs and publishing is skipped.
+name: OCR Arena Space
+
+on:
+  push:
+    branches: [main]
+    paths: ["space/**", "tests/**", ".github/workflows/publish.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 80
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Read the example pages in Chrome
+        run: |
+          npm install --no-save --silent playwright-core@1
+          (cd space && python3 -m http.server 8813 >/dev/null 2>&1 &)
+          sleep 1
+          CHROMIUM="$(command -v google-chrome || command -v chromium)" SITE=http://127.0.0.1:8813 node tests/arena_browser.mjs
+
+  publish:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Publish to huggingface.co/spaces/runemic-ai/ocr-arena
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          if [ -z "$HF_TOKEN" ]; then echo "::notice::No HF_TOKEN secret: skipping publishing."; exit 0; fi
+          python3 -m venv .venv && . .venv/bin/activate && pip install -q huggingface_hub
+          python - <<'PY'
+          import os, sys
+          from huggingface_hub import HfApi
+          api = HfApi(token=os.environ["HF_TOKEN"])
+          repo = "runemic-ai/ocr-arena"
+          try:
+              api.create_repo(repo, repo_type="space", space_sdk="static", exist_ok=True)
+              info = api.upload_folder(folder_path="space", repo_id=repo, repo_type="space",
+                                       commit_message="Update OCR Arena",
+                                       delete_patterns=["*", "**/*"])
+              api.super_squash_history(repo_id=repo, repo_type="space")  # keep one commit on Hugging Face: no dated history
+              print(f"::notice title=Published::{info.commit_url}")
+          except Exception as e:  # shown as an annotation on the run, so it can be read without the log
+              print(f"::error title=Publishing failed::{type(e).__name__}: {str(e)[:900]}".replace("\n", " "))
+              sys.exit(1)
+          PY

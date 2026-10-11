@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OCR Arena · compare OCR engines on images and PDFs, in your browser · Runemic</title>
+<meta name="description" content="Run PaddleOCR, EasyOCR, Tesseract, GLM-OCR, LightOnOCR and Runemic side by side on your own image or PDF, right in your browser. Free, with Persian, Arabic, Urdu, Hindi, Chinese, Japanese, Korean and more.">
+<link rel="icon" href="static/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="static/app.css">
+<script type="module" src="js/app.js"></script>
+</head>
+<body>
+<header class="top">
+  <div class="top__in">
+    <a class="brand" href="https://runemic.com" target="_blank" rel="noopener" aria-label="Runemic">
+      <img src="static/logo.svg" alt="" width="28" height="28"><span>Runemic</span>
+    </a>
+    <span class="top__sep" aria-hidden="true"></span>
+    <span class="top__app">OCR Arena</span>
+    <nav class="top__nav">
+      <a href="#engines">Engines</a>
+      <a href="#private">Privacy</a>
+      <a href="https://runemic.com/try" target="_blank" rel="noopener">runemic.com</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <h1>Every OCR engine. <em>One page.</em></h1>
+    <p class="lede">Drop an image or a PDF, pick up to three OCR engines and compare what each one reads, side by side. They run right here in your browser, on your own CPU or GPU: your pages never leave your device.</p>
+  </section>
+
+  <section class="arena" aria-label="OCR Arena">
+    <div class="panel input">
+      <div class="step"><span class="step__n">1</span><h2>Your page</h2></div>
+      <label class="drop" id="drop" for="file">
+        <input type="file" id="file" accept="image/png,image/jpeg,image/webp,image/gif,image/bmp,application/pdf" class="sr-only">
+        <span class="drop__empty" id="drop-empty">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V4M7.5 8.5 12 4l4.5 4.5M4 14v4.5A1.5 1.5 0 0 0 5.5 20h13a1.5 1.5 0 0 0 1.5-1.5V14"/></svg>
+          <strong>Drop an image or a PDF</strong>
+          <span>or <u>choose a file</u> · PNG, JPEG, WebP or PDF, up to 50 MB · or paste a screenshot</span>
+        </span>
+        <span class="drop__full" id="drop-full" hidden>
+          <img id="preview" alt="Your page">
+          <canvas id="pdf-preview" hidden></canvas>
+          <span class="drop__name" id="file-name"></span>
+        </span>
+      </label>
+      <div class="pdfbar" id="pdfbar" hidden>
+        <label for="pages">Pages</label>
+        <input id="pages" type="text" inputmode="numeric" placeholder="1-3, 5" autocomplete="off">
+        <span class="muted" id="page-total"></span>
+      </div>
+      <div class="examples">
+        <span class="muted small">No page handy? Try one:</span>
+        <div class="examples__row" id="examples"></div>
+      </div>
+      <div class="field">
+        <label for="lang">Language of the page</label>
+        <select id="lang"></select>
+      </div>
+    </div>
+
+    <div class="panel engines">
+      <div class="step"><span class="step__n">2</span><h2>Engines <span class="muted small" id="pick-count">pick up to 3</span></h2></div>
+      <div class="legend" aria-label="What the badges mean">
+        <span class="badge badge--cpu">Your CPU</span> runs in your browser
+        <span class="badge badge--gpu">Your GPU · WebGPU</span> runs in your browser, on your graphics card
+        <span class="badge badge--server">GPU server · soon</span> large models, coming soon
+        <span class="badge badge--api">API</span> sent to a server to read
+        <span class="badge badge--pdf">Instant</span> no OCR needed
+      </div>
+      <div class="cards" id="cards" role="group" aria-label="OCR engines"></div>
+      <details class="soon" id="soon">
+        <summary>Coming soon: large OCR models on a GPU server <span class="muted small" id="soon-count"></span></summary>
+        <div class="cards cards--soon" id="cards-soon" aria-label="OCR engines coming soon"></div>
+      </details>
+      <div class="run">
+        <button class="btn btn--primary" id="run" type="button" disabled>Read the page <span class="arrow"></span></button>
+        <span class="muted small" id="run-hint">Choose a page and at least one engine.</span>
+      </div>
+      <p class="muted small" id="gpu-note"></p>
+    </div>
+  </section>
+
+  <section class="results" id="results" aria-live="polite" hidden>
+    <div class="step"><span class="step__n">3</span><h2>What each engine read</h2></div>
+    <div class="cols" id="cols"></div>
+  </section>
+
+  <section class="section" id="engines">
+    <h2>What runs where</h2>
+    <p class="muted">There is no server behind this Space: the engines download once into your browser (and stay cached) and read your pages on your own device. Only the Runemic engine sends a page out, to read it with Runemic's models.</p>
+    <div class="table"><table id="engine-table">
+      <thead><tr><th>Engine</th><th>By</th><th>Runs on</th><th>Download</th><th>Licence</th></tr></thead>
+      <tbody></tbody>
+    </table></div>
+  </section>
+
+  <section class="section" id="private">
+    <h2>Private by design</h2>
+    <p>PaddleOCR, EasyOCR, Tesseract, GLM-OCR, LightOnOCR and the PDF text layer read your page inside this browser tab. Nothing is uploaded and nothing is stored. The Runemic engine is the one exception: it sends the page to api.runemic.com, which reads it and doesn't keep it.</p>
+    <p class="cta">Reading thousands of pages, or Persian, Urdu and old scans that need to be right? <a href="https://runemic.com" target="_blank" rel="noopener">Runemic's API</a> reads them in one call, with a free credit to start.</p>
+  </section>
+</main>
+
+<footer class="foot">
+  <span>OCR Arena is made by <a href="https://runemic.com" target="_blank" rel="noopener">Runemic</a>. Each engine keeps its own licence; follow it when you use the output.</span>
+  <span>Models: <a href="https://huggingface.co/PaddlePaddle" target="_blank" rel="noopener">PaddlePaddle</a> and <a href="https://huggingface.co/runemic-ai/easyocr-onnx" target="_blank" rel="noopener">EasyOCR</a> (Jaided AI) on Hugging Face, Tesseract.js, pdf.js.</span>
+</footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

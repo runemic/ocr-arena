@@ -1,0 +1,11 @@
+{
+  "name": "ocr-arena",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "serve": "cd space && python3 -m http.server 8813",
+    "test": "node tests/arena_browser.mjs",
+    "thumbnail": "node scripts/make-thumb.mjs"
+  },
+  "devDependencies": { "playwright-core": "^1.55.0" }
+}
