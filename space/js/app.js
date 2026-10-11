@@ -186,12 +186,14 @@ async function runEngine(e, pages, getPage, cols) {
 const sel = $("lang");
 for (const [code, name, native] of LANGUAGES) { const o = el("option", "", name === native ? name : `${name} · ${native}`); o.value = code; sel.append(o); }
 sel.addEventListener("change", renderCards);
+// the example pages, logo and fonts are runemic.com's (runemic/website keeps the only copy)
+const SAMPLES = "https://runemic.com/assets/samples/";
 for (const [name, label, code] of EXAMPLES) {
   const b = el("button", "ex"); b.type = "button";
-  const img = el("img"); img.src = "examples/" + name; img.alt = ""; img.loading = "lazy";
+  const img = el("img"); img.src = SAMPLES + name; img.alt = ""; img.loading = "lazy";
   b.append(img, el("span", "", label));
   b.addEventListener("click", async () => {
-    const blob = await (await fetch("examples/" + name)).blob();
+    const blob = await (await fetch(SAMPLES + name)).blob();
     useFile(new File([blob], name, { type: blob.type || (name.endsWith(".jpg") ? "image/jpeg" : "image/png") }), code);
   });
   $("examples").append(b);

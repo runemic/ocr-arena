@@ -12,7 +12,7 @@ Made by [Runemic](https://runemic.com).
 
 | Path | What it is |
 |---|---|
-| `space/` | The Hugging Face Space (a static Space: `index.html`, `js/`, `static/`, `examples/`). Published as is. |
+| `space/` | The Hugging Face Space (a static Space: `index.html`, `js/`, `static/`). Published as is. The example pages, logo and fonts load from https://runemic.com/assets/ (kept in runemic/website). |
 | `space/js/engines.js` | The engines and where each one runs |
 | `space/js/paddle.js`, `easyocr.js`, `vlm.js` | PaddleOCR (PP-OCR, ONNX Runtime Web), EasyOCR (CRAFT + CRNN, ONNX), and vision-language models (Transformers.js) |
 | `tests/arena_browser.mjs` | Reads every example page with each engine in Chrome; fails if an engine errors |

@@ -2,7 +2,8 @@
 // Opens the served Space in Chromium and reads the example pages with PaddleOCR, EasyOCR and Tesseract (every script).
 // Fails if an engine errors or returns nothing, or if PaddleOCR misses a word it should find.
 //   SITE=http://127.0.0.1:8813 CHROMIUM=/path/to/chrome node tests/ocr_arena_browser.mjs
-// MIRROR=<dir> serves the CDN and Hugging Face files from local copies (for machines without that network).
+// MIRROR=<dir> serves the CDN and Hugging Face files from local copies (for machines without that network);
+// DESIGN_DIR=<a runemic/website checkout>/public does the same for runemic.com's example pages, logo and fonts.
 import { chromium } from "playwright-core";
 import { readFileSync, existsSync } from "node:fs";
 
@@ -28,6 +29,13 @@ if (MIRROR) {
       : u.includes("/PaddlePaddle/") ? u.split("/PaddlePaddle/")[1].split("/")[0] + "." + u.split(".").pop() : "none";
     if (!existsSync(M + name)) return route.fulfill({ status: 404, body: "" });
     route.fulfill({ status: 200, body: readFileSync(M + name), headers: { "access-control-allow-origin": "*" } });
+  });
+}
+if (process.env.DESIGN_DIR) {
+  await ctx.route("https://runemic.com/assets/**", (route) => {
+    const f = process.env.DESIGN_DIR + new URL(route.request().url()).pathname;
+    if (!existsSync(f)) return route.fulfill({ status: 404, body: "" });
+    route.fulfill({ status: 200, body: readFileSync(f), headers: { "access-control-allow-origin": "*" } });
   });
 }
 const page = await ctx.newPage();

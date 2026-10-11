@@ -1,15 +1,19 @@
 // Draws the OCR Arena Space's thumbnail (space/thumbnail.png, 1200×630) in the homepage style:
 // real pages around the headline, and the engines it compares.   node scripts/make-arena-thumb.mjs
 import { chromium } from "playwright-core";
-import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const space = path.join(root, "space"), samples = path.join(root, "scripts/thumb-samples");
-const logo = readFileSync(path.join(space, "static/logo.svg"), "utf8");
-const img = (f) => `data:image/${f.endsWith(".png") ? "png" : "jpeg"};base64,` + readFileSync(path.join(samples, f)).toString("base64");
-const geist = `@font-face{font-family:"Geist";src:url("file://${space}/static/fonts/geist-latin-wght-normal.woff2") format("woff2");font-weight:100 900}`;
+const space = path.join(root, "space");
+// the logo, font and sample pages come from runemic.com (runemic/website keeps the only copy)
+const A = "https://runemic.com/assets/";
+const get = async (p) => { const r = await fetch(A + p); if (!r.ok) throw new Error(`${A + p}: HTTP ${r.status}`); return Buffer.from(await r.arrayBuffer()); };
+const logo = (await get("brand/logo.svg")).toString("utf8");
+const data = {};
+for (const f of ["shahnameh.jpg", "japanese.png", "arabic-1897.jpg", "grimm.jpg"]) data[f] = (await get("samples/" + f)).toString("base64");
+const img = (f) => `data:image/${f.endsWith(".png") ? "png" : "jpeg"};base64,` + data[f];
+const geist = `@font-face{font-family:"Geist";src:url("data:font/woff2;base64,${(await get("fonts/geist-latin-wght-normal.woff2")).toString("base64")}") format("woff2");font-weight:100 900}`;
 const cards = [["shahnameh.jpg", "فارسی", "left:52px;top:34px;width:204px;--r:-5deg"], ["japanese.png", "日本語", "left:-6px;top:338px;width:214px;--r:4deg"],
   ["arabic-1897.jpg", "العربية", "right:46px;top:26px;width:208px;--r:5deg"], ["grimm.jpg", "Fraktur", "right:-4px;top:336px;width:218px;--r:-4deg"]]
   .map(([f, t, s]) => `<div class="card" style="${s}"><img src="${img(f)}"><span class="tag">${t}</span></div>`).join("");
