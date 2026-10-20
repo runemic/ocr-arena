@@ -167,7 +167,7 @@ export const ENGINES = [
   {
     id: "runemic", name: "Runemic", version: "preview models", by: "Runemic Labs", link: "https://runemic.com",
     license: "Hosted API", where: "api", languages: null, size: "",
-    note: "Runemic's hosted OCR: vision models that read whole pages into Markdown, strong on Arabic-script, Indic and CJK. The page is sent to api.runemic.com; 10 free pages a day.",
+    note: "Runemic's hosted OCR: vision models that read whole pages into Markdown, strong on Arabic-script, Indic and CJK. The page is sent to api.runemic.com; free to try.",
     async read(page) {
       const blob = await new Promise((ok) => page.canvas.toBlob(ok, "image/jpeg", 0.9));
       const form = new FormData();

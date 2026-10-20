@@ -65,7 +65,7 @@ device (except with the Runemic engine, which reads the page on api.runemic.com)
 | [GLM-OCR](https://huggingface.co/zai-org/GLM-OCR) 0.9B | Your GPU (WebGPU) | Zhipu AI's vision-language OCR model with [Transformers.js](https://github.com/huggingface/transformers.js); the whole page to Markdown; about 780 MB |
 | [LightOnOCR-2](https://huggingface.co/lightonai/LightOnOCR-2-1B) 1B | Your GPU (WebGPU) | LightOn's end-to-end OCR model, the same way; about 900 MB |
 | [Tesseract](https://github.com/naptha/tesseract.js) 5 | Your CPU (WebAssembly) | The classic engine, 100+ languages |
-| [Runemic](https://runemic.com) | API | Hosted vision models; 10 free pages a day |
+| [Runemic](https://runemic.com) | API | Hosted vision models; free to try |
 | PDF text layer ([pdf.js](https://mozilla.github.io/pdf.js/)) | Instant | Not OCR: the text a digital PDF already has |
 
 **Coming soon, on a GPU server:** Unlimited-OCR (Baidu), DeepSeek-OCR 2, PaddleOCR-VL, dots.ocr and Chandra OCR 2.
